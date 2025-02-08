@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Game | SL</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+   <div class="container">
+       <h2>Memory Game</h2>
+       <div class="game"></div>
+       <button class="reset" onclick="window.location.reload();">Reset Game</button>
+   </div> 
+   <div id="winMessage">
+    <h1>🎉 You Win! Machallah 🎊</h1>
+</div>
+   <script>
+    const imgPairs = {
+        "camel.jpg": "salah.jpg",
+        "delfin.jpg": "yunus.jpg",
+        "fire.jpg": "Ibrahim.jpg",
+        "kabil.jpg": "ghorab.jpg",
+        "kharouf.jpg": "ismail.jpg",
+        "musa.jpg": "sea.jpg",
+        "Nuh.jpg": "safina.jpg",
+        "Yusuf.jpg": "biier.jpg",
+        "solemen.jpg": "namela.jpg",
+        "ghar.jpg": "muhamed.jpg"
+    };
+
+    let imgList = [];
+    for (let key in imgPairs) {
+        imgList.push(key, imgPairs[key]); 
+    }
+
+    var shuffledImages = imgList.sort(() => (Math.random() > 0.5) ? 2 : -1);
+
+    for (var i = 0; i < shuffledImages.length; i++) {
+        let card = document.createElement('div');
+        card.className = 'item';
+        let imgName = shuffledImages[i];
+
+        card.setAttribute("data-name", imgName);
+
+        card.innerHTML = `<img src="image/${imgName}">`;
+
+        card.onclick = function () {
+            this.classList.add('boxOpen');
+
+            setTimeout(function () {
+                let openCards = document.querySelectorAll('.boxOpen');
+                if (openCards.length > 1) {
+                    let firstCard = openCards[0];
+                    let secondCard = openCards[1];
+
+                    let firstName = firstCard.getAttribute("data-name");
+                    let secondName = secondCard.getAttribute("data-name");
+
+                    if (imgPairs[firstName] === secondName || imgPairs[secondName] === firstName) {
+                        firstCard.classList.add('boxMatch');
+                        secondCard.classList.add('boxMatch');
+                        firstCard.classList.remove('boxOpen');
+                        secondCard.classList.remove('boxOpen');
+
+                        if (document.querySelectorAll('.boxMatch').length == imgList.length) {
+                            showWinMessage();
+                        }
+                    } else {
+                        setTimeout(() => {
+                            firstCard.classList.remove('boxOpen');
+                            secondCard.classList.remove('boxOpen');
+                        }, 500);
+                    }
+                }
+            }, 500);
+        };
+
+        document.querySelector(".game").appendChild(card);
+    }
+    function showWinMessage() {
+    document.getElementById("winMessage").style.display = "block";
+    document.getElementById("winMessage").style.animation = "popIn 0.5s ease-in-out";
+    
+    // Ajouter confettis
+    for (let i = 0; i < 30; i++) {
+        let confetti = document.createElement("div");
+        confetti.className = "confetti";
+        confetti.style.left = Math.random() * 100 + "vw";
+        confetti.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`; // Couleur aléatoire
+        confetti.style.animationDuration = (Math.random() * 3 + 2) + "s";
+        document.body.appendChild(confetti);
+
+        setTimeout(() => confetti.remove(), 5000); // Supprimer après 5 secondes
+    }
+}
+
+   </script>
+</body>
+</html>
